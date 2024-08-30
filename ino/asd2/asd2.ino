@@ -24,7 +24,6 @@ void loop()
 
     if (Serial.available() > 0)
     {
-
         response.header   = "";
         response.pinStr   = "";
         response.message  = "";
@@ -35,16 +34,19 @@ void loop()
 
         if (!parseData(requestStr, request))
         {
-            response.message = "Parsing failed.";
+            response.message = "Parsing failed. ";
             goto exit;
         }
 
         if (request.header == "arduino->pc")
-            return;
+        {
+            response.message = "Checksum failed.";
+            // goto exit;
+        }
 
         /*if (!validateChecksum(request))
         {
-            response.message = "Checksum failed.";
+            response.message += "Checksum failed.";
             goto exit;
         }*/
 
@@ -79,6 +81,21 @@ void loop()
 
 bool parseData(const String& input, Data& data)
 {
+    // Check if the input contains exactly 3 semicolons
+    int semicolonCount = 0;
+    for (int i = 0; i < input.length(); i++)
+    {
+        if (input[i] == ';')
+            semicolonCount++;
+    }
+
+    if (semicolonCount != 3)
+    {
+        Serial.print("Invalid input format. Expected 3 semicolons but found: ");
+        Serial.println(semicolonCount);
+        return false;
+    }
+
     // Parsing main Str fields
     int headerEnd = input.indexOf(';');
     data.header   = input.substring(0, headerEnd);
@@ -92,34 +109,62 @@ bool parseData(const String& input, Data& data)
     data.message   = remainder.substring(0, messageEnd);
     data.checksum  = remainder.substring(messageEnd + 1);
 
+    Serial.print("   ");
+    Serial.print(data.header);
+    Serial.println();
+    Serial.print("   ");
+    Serial.print(data.pinStr);
+    Serial.println();
+    Serial.print("   ");
+    Serial.print(data.message);
+    Serial.println();
+    Serial.print("   ");
+    Serial.print(data.checksum);
+    Serial.println();
+
     int pin = 0;
-    int cc  = 0;
-    while (data.pinStr[cc])
+    for (int cc = 0; data.pinStr[cc]; cc++)
     {
         switch (data.pinStr[cc])
         {
             case ',':
+                // needs to be in its own line else will be called several times
                 pin++;
                 break;
             case 'o':
-                data.pinModes[pin] = OUTPUT;
+                data.pinModes[min(pin, MAX_PINS)] = OUTPUT;
                 break;
             case 'i':
-                data.pinModes[pin] = INPUT;
+                data.pinModes[min(pin, MAX_PINS)] = INPUT;
                 break;
             case 'p':
-                data.pinModes[pin] = INPUT_PULLUP;
+                data.pinModes[min(pin, MAX_PINS)] = INPUT_PULLUP;
                 break;
             case '0':
-                data.pinStates[pin] = LOW;
+                data.pinStates[min(pin, MAX_PINS)] = LOW;
                 break;
             case '1':
-                data.pinStates[pin] = HIGH;
+                data.pinStates[min(pin, MAX_PINS)] = HIGH;
+                break;
+            case ';':
                 break;
             default:
+                Serial.print("Unexpected pin state string in request: ");
+                Serial.println(data.pinStr[cc]);
+                return false;
                 break;
         }
     }
+
+    if (pin + 1 != MAX_PINS)
+    {
+        Serial.print("Wrong number of pins in request. Found: ");
+        Serial.print(pin + 1);
+        Serial.print(" but expected ");
+        Serial.println(MAX_PINS);
+        return false;
+    }
+
     return true;
 }
 
