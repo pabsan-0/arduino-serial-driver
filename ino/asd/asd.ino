@@ -1,8 +1,30 @@
 
-/* --------- ------------- -------------- */
+
+struct Request
+{
+    String header;
+    String seq;
+    String cmd;
+    String arg0;
+    String arg1;
+    String arg2;
+    String arg3;
+    String checksum;
+}
+
+struct Response
+{
+    String header;
+    String seq;
+    String retval;
+    String messages;
+    String checksum;
+}
+
 /* Should be in shared header */
 
-enum Commands {
+enum Commands
+{
     DIGITAL_WRITE           = 0,
     DIGITAL_READ            = 1,
     PIN_MODE                = 2,
@@ -13,7 +35,8 @@ enum Commands {
     ANALOG_WRITE_RESOLUTION = 7,
 };
 
-enum Arguments {
+enum Arguments
+{
     TIMESTAMP = 0,
     COMMAND   = 1,
     ARG0      = 2,
@@ -24,78 +47,79 @@ enum Arguments {
 
 /* --------- ------------- -------------- */
 
-void setup() 
+void setup()
 {
-    Serial.begin(9600); 
+    Serial.begin(9600);
 }
 
-void loop() 
+void loop()
 {
 
-    if (Serial.available() > 0) 
+    if (Serial.available() > 0)
     {
 
-        String request = Serial.readStringUntil('\n'); 
+        String request = Serial.readStringUntil('\n');
 
-        String command = parserequest(request, COMMAND)
-        if (!command) { return; } 
+        String command = parserequest(request, COMMAND) if (!command)
+        {
+            return;
+        }
 
-        switch(command.toInt()) {
+        switch (command.toInt())
+        {
             case DIGITAL_WRITE;
 
                 String dw_arg0 = parseRequest(request, ARG0);
                 String dw_arg1 = parseRequest(request, ARG1);
 
-                if (!isValidDigitalPin(dr_arg0))
-                    return;
-                
-                if (!isHighOrLow(dw_arg1)) 
-                    return;
+                if (!isValidDigitalPin(dr_arg0)) return;
+
+                if (!isHighOrLow(dw_arg1)) return;
 
                 digitalWrite(dw_arg0, dw_arg1)
 
-                break;
+                    break;
 
-            case DIGITAL_READ;
+                case DIGITAL_READ;
 
                 String dr_arg0 = parseRequest(request, ARG0);
 
-                if (!isValidDigitalPin(dr_arg0))
-                    return;
-                
+                if (!isValidDigitalPin(dr_arg0)) return;
+
                 bool ret = digitalRead(dr_arg0, dr_arg1)
 
-                break;
+                    break;
 
-            case PIN_MODE;
+                case PIN_MODE;
 
                 String pm_arg0 = parseRequest(request, ARG0);
                 String pm_arg1 = parseRequest(request, ARG1);
 
-                if (!isValidDigitalPin(pm_arg0))
-                    return;
-                
-                if (!isInputOrOutput(pm_arg1)) 
-                    return;
+                if (!isValidDigitalPin(pm_arg0)) return;
+
+                if (!isInputOrOutput(pm_arg1)) return;
 
                 pinMode(pm_arg0, pm_arg1)
 
-                break;
+                    break;
 
-            default:
+                default:
                 break;
         }
     }
 }
 
-String parseRequest(String input, int n) 
+String parseRequest(String input, int n)
 {
     int startIndex = 0;
     int commaCount = 0;
 
-    for (int i = 0; i < input.length(); i++) {
-        if (input.charAt(i) == ',') {
-            if (commaCount == n) {
+    for (int i = 0; i < input.length(); i++)
+    {
+        if (input.charAt(i) == ',')
+        {
+            if (commaCount == n)
+            {
                 return input.substring(startIndex, i);
             }
             commaCount++;
@@ -104,18 +128,21 @@ String parseRequest(String input, int n)
     }
 
     // If n-th element is the last element or input does not contain enough commas
-    if (commaCount == n) {
+    if (commaCount == n)
+    {
         return input.substring(startIndex);
     }
 
     // Out of bounds
-    return ""; 
+    return "";
 }
 
-bool isValidDigitalPin(int pin) {
-    return pin >= 0 && pin <= 13;  // Example validation for Arduino Uno
+bool isValidDigitalPin(int pin)
+{
+    return pin >= 0 && pin <= 13; // Example validation for Arduino Uno
 }
 
-bool isHighOrLow(String value) {
+bool isHighOrLow(String value)
+{
     return value == "HIGH" || value == "LOW";
 }
