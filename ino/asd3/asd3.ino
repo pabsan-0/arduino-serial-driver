@@ -42,7 +42,7 @@ void setup()
 void loop()
 {
 
-    if (Serial.available() > 0)
+    if (Serial.available() > sizeof(Request))
     {
 
         String   reqStr;
@@ -55,14 +55,8 @@ void loop()
         res.out0     = "";
         res.messages = "";
         res.checksum = "";
-
-        reqStr = Serial.readStringUntil('\n');
-        reqStr.trim();
-
-        if (!requestParse(reqStr, req, nargs))
-        {
-            goto exit;
-        }
+        
+        Serial.readBytes((char*)&req, sizeof(req));
 
         if (req.header == "arduino->pc")
         {
@@ -170,62 +164,6 @@ bool isHighOrLow(String value)
     return (value == "HIGH") || (value == "LOW");
 }
 
-bool requestParse(const String& input, Request& request, int& nargs)
-{
-    // Check if the input contains exactly 3 semicolons
-    int semicolonCount = 0;
-    for (int i = 0; i < input.length(); i++)
-    {
-        if (input[i] == ';')
-            semicolonCount++;
-    }
-
-    if (semicolonCount != 5)
-    {
-        Serial.print("Invalid input format. Expected 5 semicolons but found: ");
-        Serial.println(semicolonCount);
-        return false;
-    }
-
-    String nextString;
-    int    nextSemicolon;
-
-    nextSemicolon  = input.indexOf(';');
-    request.header = input.substring(0, nextSemicolon);
-    nextString     = input.substring(nextSemicolon + 1);
-
-    nextSemicolon   = nextString.indexOf(';');
-    request.command = nextString.substring(0, nextSemicolon);
-    nextString      = nextString.substring(nextSemicolon + 1);
-
-    nextSemicolon = nextString.indexOf(';');
-    request.arg0  = nextString.substring(0, nextSemicolon);
-    nextString    = nextString.substring(nextSemicolon + 1);
-
-    nextSemicolon = nextString.indexOf(';');
-    request.arg1  = nextString.substring(0, nextSemicolon);
-    nextString    = nextString.substring(nextSemicolon + 1);
-
-    nextSemicolon    = nextString.indexOf(';');
-    request.arg2     = nextString.substring(0, nextSemicolon);
-    request.checksum = nextString.substring(nextSemicolon + 1);
-
-    request.header.trim();
-    request.command.trim();
-    request.arg0.trim();
-    request.arg1.trim();
-    request.arg2.trim();
-    request.checksum.trim();
-
-    if (request.arg0 != "")
-        nargs++;
-    if (request.arg1 != "")
-        nargs++;
-    if (request.arg2 != "")
-        nargs++;
-
-    return true;
-}
 
 bool requestValidateChecksum(Request& request)
 {
