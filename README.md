@@ -6,6 +6,9 @@ A multifunctional arduino sketch and a C library with a serial interface to your
 ### Arduino side
 
 TODO converto to raw bytes instead of strings inside structs
+```
+arduino-cli compile -b arduino:avr:uno asd_ino/
+```
 
 ### Compile and run C sample
 

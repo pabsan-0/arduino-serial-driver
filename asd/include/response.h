@@ -3,12 +3,12 @@
 
 typedef struct Response
 {
-    char* header;
-    char* retval;
-    char* out0;
-    char* messages;
+    char header[10];
+    char retval[10];
+    char out0[10];
+    char messages[50];
 
-    char* checksum;
+    char checksum[10];
 } Response;
 
 #endif

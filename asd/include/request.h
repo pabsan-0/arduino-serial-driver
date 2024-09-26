@@ -3,13 +3,13 @@
 
 typedef struct Request
 {
-    char* header;
-    char* command;
-    char* arg0;
-    char* arg1;
-    char* arg2;
+    char header[10];
+    char command[20];
+    char arg0[10];
+    char arg1[10];
+    char arg2[10];
 
-    char* checksum;
+    char checksum[10];
 } Request;
 
 #endif
