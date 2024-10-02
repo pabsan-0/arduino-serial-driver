@@ -1,14 +1,14 @@
 #include "commands.h"
 
-int digitalWrite(int pin, int value)
+int digitalWrite(int pin, PinState value)
 {
     Request  req;
     Response res;
 
-    sprintf(req.command, "digitalWrite");
-    sprintf(req.arg0, "%d", pin);
-    sprintf(req.arg1, "%d", value);
-
+    req.cmd = COMMAND_DIGITAL_WRITE;
+    req.arg0 = pin;
+    req.arg1 = value;
+    
     serialRequestResponse(req, res);
 
     return atoi(res.retval);
@@ -19,22 +19,22 @@ int digitalRead(int pin)
     Request  req;
     Response res;
 
-    sprintf(req.command, "digitalRead");
-    sprintf(req.arg0, "%d", pin);
+    req.cmd = COMMAND_DIGITAL_READ;
+    req.arg0 = pin;
 
     serialRequestResponse(req, res);
 
     return atoi(res.retval);
 }
 
-int pinMode(int pin, int mode)
+int pinMode(int pin, PinMode mode)
 {
     Request  req;
     Response res;
 
-    sprintf(req.command, "pinMode");
-    sprintf(req.arg0, "%d", pin);
-    sprintf(req.arg1, "%d", mode);
+    req.cmd = COMMAND_PIN_MODE;
+    req.arg0 = pin;
+    req.arg1 = mode;
 
     serialRequestResponse(req, res);
 

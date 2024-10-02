@@ -52,6 +52,10 @@ void loop()
         Request  req;
 
         // Read binary data into Request struct
+
+        // TODO read until \r
+        // TODO double check the size matches the struct
+        // TODO parse the bytes into the struct OR reject and send a try-again code
         Serial.readBytes((char*)&req, sizeof(req));
 
         // Check the header to ensure it's a valid request
