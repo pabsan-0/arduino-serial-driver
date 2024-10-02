@@ -1,10 +1,11 @@
 // Define the same struct as in the C program
-struct __attribute__((packed)) structTable {
-  char page;
-  char cric;
-  char crac;
-  char croc;
-};
+typedef struct {
+    int16_t a;
+    long b:4;
+    char c[4];
+    char d;
+} __attribute__((__packed__)) structTable;
+
 
 void setup() {
   Serial.begin(9600);  // Initialize serial port for communication with the computer
@@ -23,23 +24,12 @@ void loop() {
   structTable receivedData;
   memcpy(&receivedData, buffer, sizeof(structTable));
 
-  // Prepare a response to send back
-  char response[50];
-  snprintf(response, sizeof(response), "Page: %c, Cric: %c, Crac: %c, Croc: %c",
-    receivedData.page, 
-    receivedData.cric, 
-    receivedData.crac, 
-    receivedData.croc
-  );
   
   // Send the response back over the serial port
   //Serial.println(response);
   //Serial.print('\\');
   
-  receivedData.cric += 1;
-  receivedData.croc = 'D';
-
-  Serial.write((const char *)&receivedData, sizeof(structTable));
+  Serial.write((uint8_t *)&receivedData, sizeof(structTable));
   Serial.write((const char *)"\r", 1);
 
 }
