@@ -67,7 +67,7 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
 
             if (buffer[bytes_read] == SERIAL_DELIMITER) {
                 memcpy(dest, buffer, sizeof(Request));
-                return SERIAL_ERROR_OK;
+                return SERIAL_ERROR_NONE;
             }
 
             bytes_read += n;
@@ -80,18 +80,22 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
     return SERIAL_ERROR_TIMEOUT;
 }
 
-int serialRequestResponse(Request request, Response response)
+int serialRequestResponse(Request request, Response response, int recursion_lvl)
 {
-    SerialSendRequest(request);
-    SerialError ret = SerialReadUntil(response, SERIAL_TIMEOUT);
+	if (recursion_lvl > SERIAL_RETRY_LIMIT) {
+		return -1;
+	}
+
+    serialSendRequest(request);
+    SerialError ret = serialReadResponse(&response, SERIAL_TIMEOUT);
 
     // Check serial interchange
     switch (ret) {
         case SERIAL_ERROR_TIMEOUT:
-            return serialRequestResponse(request, response)
+            return serialRequestResponse(request, response, ++recursion_lvl);
         case SERIAL_ERROR_OVERFLOW:
-            return serialRequestResponse(request, response)
-        case SERIAL_ERROR_OK:
+            return serialRequestResponse(request, response, ++recursion_lvl);
+        case SERIAL_ERROR_NONE:
             break;
         default: 
             break;

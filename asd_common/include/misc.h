@@ -47,13 +47,4 @@ enum Command
 };
 typedef enum Command Command;
 
-// TODO should be in host, not common
-enum Error
-{
-    ERROR_CHECKSUM, // Checksum mismatch
-    ERROR_TIMEOUT,  // No serial response in time
-    ERROR_REMOTE    // Error, info in Arduino's msg
-};
-typedef enum Error Error;
-
 #endif

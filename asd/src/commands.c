@@ -1,6 +1,9 @@
 #include "commands.h"
 
-int digitalWrite(int pin, PinState value)
+// TODO add request printing here to diagnose commands
+// TODO refactor? three-times repeated code
+
+void digitalWrite(int pin, PinState value)
 {
     Request  req;
     Response res;
@@ -9,12 +12,24 @@ int digitalWrite(int pin, PinState value)
     req.arg0 = pin;
     req.arg1 = value;
     
-    serialRequestResponse(req, res);
+    if (!serialRequestResponse(req, res, 0)) {
+        printf("Serial comms failed.\n");
+        return;
+    }
 
-    return atoi(res.retval);
+    if (strcmp(res.messages, "")) {
+        printf("%s\n", res.messages); 
+    }
+
+    if (res.retval != 0) {
+        printf("Remote error!\n"); 
+        return;
+    }
+
+    return;
 };
 
-int digitalRead(int pin)
+PinState digitalRead(int pin)
 {
     Request  req;
     Response res;
@@ -22,12 +37,24 @@ int digitalRead(int pin)
     req.cmd = COMMAND_DIGITAL_READ;
     req.arg0 = pin;
 
-    serialRequestResponse(req, res);
+    if (!serialRequestResponse(req, res, 0)) {
+        printf("Serial comms failed.\n");
+        return -1;
+    }
 
-    return atoi(res.retval);
+    if (strcmp(res.messages, "")) {
+        printf("%s\n", res.messages); 
+    }
+
+    if (res.retval != 0) {
+        printf("Remote error!\n"); 
+        return -1;
+    }
+
+    return res.out0;
 }
 
-int pinMode(int pin, PinMode mode)
+void pinMode(int pin, PinMode mode)
 {
     Request  req;
     Response res;
@@ -36,7 +63,19 @@ int pinMode(int pin, PinMode mode)
     req.arg0 = pin;
     req.arg1 = mode;
 
-    serialRequestResponse(req, res);
+    if (!serialRequestResponse(req, res, 0)) {
+        printf("Serial comms failed.\n");
+        return;
+    }
 
-    return atoi(res.retval);
+    if (strcmp(res.messages, "")) {
+        printf("%s\n", res.messages); 
+    }
+
+    if (res.retval != 0) {
+        printf("Remote error!\n"); 
+        return;
+    }
+
+    return;
 }
