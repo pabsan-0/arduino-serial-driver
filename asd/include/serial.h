@@ -12,7 +12,19 @@
 #include <errno.h>
 #include <termios.h>
 
-int serialBegin();
+#define SERIAL_DELIMITER (10) // ascii char
+#define SERIAL_TIMEOUT (5)    // seconds
+
+enum SerialError
+{
+    SERIAL_ERROR_TIMEOUT,  // No serial response in time
+    SERIAL_ERROR_OVERFLOW, // Too many incoming bytes
+    SERIAL_ERROR_REMOTE,   // Misc error, info in Arduino's msg
+    SERIAL_ERROR_NONE      // OK
+};
+typedef enum SerialError SerialError;
+
+int serialBegin(char* port);
 int serialClose();
 int serialRequestResponse(Request request, Response response);
 
