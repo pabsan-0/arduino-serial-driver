@@ -8,6 +8,7 @@ void digitalWrite(int pin, PinState value)
     Request  req;
     Response res;
 
+    strncpy(req.header, "pc", 3);
     req.cmd = COMMAND_DIGITAL_WRITE;
     req.arg0 = pin;
     req.arg1 = value;
@@ -34,6 +35,7 @@ PinState digitalRead(int pin)
     Request  req;
     Response res;
 
+    strncpy(req.header, "pc", 3);
     req.cmd = COMMAND_DIGITAL_READ;
     req.arg0 = pin;
 
@@ -59,6 +61,7 @@ void pinMode(int pin, PinMode mode)
     Request  req;
     Response res;
 
+    strncpy(req.header, "pc", 3);
     req.cmd = COMMAND_PIN_MODE;
     req.arg0 = pin;
     req.arg1 = mode;

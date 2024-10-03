@@ -3,8 +3,9 @@
 
 int main(int argc, char* argv[]) {
     serialBegin("/dev/ttyUSB0");
-
     printf("started\n");
+    sleep(5);
+    printf("for realsies\n");
 
     PinState pin1 = digitalRead(1);
     printf("1: pin1: %d", pin1);

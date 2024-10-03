@@ -65,6 +65,9 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
         int n = read(serial_port, &buffer[bytes_read], 1);
         if (n > 0) {
 
+            printf("\t'%c':'%d'\n", buffer[bytes_read], buffer[bytes_read]);
+            fflush(stdout);
+
             if (buffer[bytes_read] == SERIAL_DELIMITER) {
                 memcpy(dest, buffer, sizeof(Request));
                 return SERIAL_ERROR_NONE;
@@ -83,6 +86,7 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
 int serialRequestResponse(Request request, Response response, int recursion_lvl)
 {
 	if (recursion_lvl > SERIAL_RETRY_LIMIT) {
+        printf("Reached retry limit. Failed Serial comms.");
 		return -1;
 	}
 
@@ -92,10 +96,13 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
     // Check serial interchange
     switch (ret) {
         case SERIAL_ERROR_TIMEOUT:
+            printf("Serial timed out, retrying...\n");
             return serialRequestResponse(request, response, ++recursion_lvl);
         case SERIAL_ERROR_OVERFLOW:
+            printf("Serial got overflowing bytes, retrying...\n");
             return serialRequestResponse(request, response, ++recursion_lvl);
         case SERIAL_ERROR_NONE:
+            printf("Serial OK\n");
             break;
         default: 
             break;

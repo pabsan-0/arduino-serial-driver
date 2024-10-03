@@ -1,6 +1,8 @@
 #ifndef __ARDUINO_H__
 #define __ARDUINO_H__
 
+#define SERIAL_DELIMITER (10) // ascii char
+
 // User conveniences inherited from Arduino
 // Bool values
 #ifndef HIGH
