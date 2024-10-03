@@ -19,12 +19,17 @@
 void setup()
 {
     Serial.begin(9600);
+    while (!Serial) {
+      ; // wait for serial port to connect. Needed for native USB
+    }
 }
 
 void loop()
 {
-    char   buffer[sizeof(Request) + 2];
-    size_t read_count = Serial.readBytesUntil(SERIAL_DELIMITER, buffer, sizeof(Request) * 2);
+    delay(500);
+
+    char   buffer[sizeof(Request) * 2];
+    size_t read_count = Serial.readBytesUntil(SERIAL_DELIMITER_INO, buffer, sizeof(Request) * 2);
     if (read_count != sizeof(Request))
     {
         return;
@@ -107,7 +112,7 @@ exit:
 void sendResponse(Response& res)
 {
     Serial.write((uint8_t*)&res, sizeof(Response));
-    Serial.write((const char*)SERIAL_DELIMITER, 1);
+    Serial.write((const char*)SERIAL_DELIMITER_INO, 1);
 }
 
 bool isValidDigitalPin(int pin)

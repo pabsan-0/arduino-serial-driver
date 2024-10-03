@@ -32,7 +32,7 @@ int serialBegin(char* port)
     tcsetattr(serial_port, TCSANOW, &tty);
 
     return serial_port;
-};
+}
 
 int serialClose()
 {
@@ -46,12 +46,16 @@ int serialClose()
     close(serial_port);
     serial_port = -1;
     return 0;
-};
+}
 
 static int serialSendRequest(const Request data) 
 {
+    char delim_str[] = { SERIAL_DELIMITER }; // allow string usage for macro
+
     write(serial_port, &data, sizeof(Request));
-    write(serial_port, "\r", 1);  // Send newline to mark end of message
+    write(serial_port, delim_str, 1);  
+
+    return 0;
 }
 
 static SerialError serialReadResponse(Response *dest, const int timeout_sec)
@@ -69,12 +73,13 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
             fflush(stdout);
 
             if (buffer[bytes_read] == SERIAL_DELIMITER) {
-                memcpy(dest, buffer, sizeof(Request));
+                memcpy(dest, buffer, sizeof(Response));
                 return SERIAL_ERROR_NONE;
             }
 
             bytes_read += n;
-            if (bytes_read >= sizeof(Request) + 1) {
+            if (bytes_read >= sizeof(Response) + 1) {
+                // printf("Exceeded bytes!");
                 return SERIAL_ERROR_OVERFLOW; 
             }
         }
@@ -86,7 +91,7 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
 int serialRequestResponse(Request request, Response response, int recursion_lvl)
 {
 	if (recursion_lvl > SERIAL_RETRY_LIMIT) {
-        printf("Reached retry limit. Failed Serial comms.");
+        printf("Reached retry limit. Failed Serial comms.", NULL); // NULL solves garbage extra chars
 		return -1;
 	}
 
@@ -109,4 +114,4 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
     }
 
     return 0;
-};
+}

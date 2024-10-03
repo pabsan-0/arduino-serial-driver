@@ -2,6 +2,7 @@
 #include "serial.h"
 
 int main(int argc, char* argv[]) {
+    // serialBegin("/dev/pts/2");
     serialBegin("/dev/ttyUSB0");
     printf("started\n");
     sleep(5);

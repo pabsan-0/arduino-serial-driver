@@ -28,7 +28,7 @@ void digitalWrite(int pin, PinState value)
     }
 
     return;
-};
+}
 
 PinState digitalRead(int pin)
 {

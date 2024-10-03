@@ -13,7 +13,6 @@
 #include <termios.h>
 #include <time.h>
 
-#define SERIAL_DELIMITER (10)  // ascii char
 #define SERIAL_TIMEOUT (5)     // seconds
 #define SERIAL_RETRY_LIMIT (3) // serial attempts
 

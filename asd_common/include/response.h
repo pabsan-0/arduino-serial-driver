@@ -11,8 +11,8 @@ struct Response
 {
     char    header[10];                  // Header identifier string
     char    messages[RESPONSE_MSG_SIZE]; // Error messages for the user
-    uint8_t retval;                      // 0: OK, 1: NOT OK
-    uint8_t out0;                        // Command output, if any
+    int16_t retval;                      // 0: OK, 1: NOT OK
+    int16_t out0;                        // Command output, if any
     //    Request req;                   // Request being answered
 } __attribute__((__packed__));
 
