@@ -33,8 +33,8 @@
 
 void digitalWrite(int pin, PinState value)
 {
-    Request  req;
-    Response res;
+    Request  req = { 0 };
+    Response res = { 0 }; // else may contain stack garbage
 
     strncpy(req.header, "pc", 3);
     req.cmd  = COMMAND_DIGITAL_WRITE;
@@ -51,8 +51,8 @@ error:
 
 PinState digitalRead(int pin)
 {
-    Request  req;
-    Response res;
+    Request  req = { 0 };
+    Response res = { 0 };
 
     strncpy(req.header, "pc", 3);
     req.cmd  = COMMAND_DIGITAL_READ;
@@ -68,8 +68,8 @@ error:
 
 void pinMode(int pin, PinMode mode)
 {
-    Request  req;
-    Response res;
+    Request  req = { 0 };
+    Response res = { 0 };
 
     strncpy(req.header, "pc", 3);
     req.cmd  = COMMAND_PIN_MODE;
