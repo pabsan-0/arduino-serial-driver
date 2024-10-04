@@ -7,7 +7,7 @@
 
 // Make strings multiple of 8 to avoid garbage (empyrical)
 #define RESPONSE_HEADER_SIZE (8)
-#define RESPONSE_MSG_SIZE (64)
+#define RESPONSE_MSG_SIZE (16)
 
 #define RESPONSE_PRINT(res)                     \
     printf("Response { '%s' , %s , %d, %d }\n", \

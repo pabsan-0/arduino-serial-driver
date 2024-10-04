@@ -77,9 +77,9 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
         {
             bytes_read += n;
 
-            // fflush(stdout);
-            // printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
-            // fflush(stdout);
+            fflush(stdout);
+            printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
+            fflush(stdout);
 
             // Have I read more bytes than response + delimiter?
             if (bytes_read > sizeof(Response) + 1)
@@ -101,7 +101,7 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
     if (bytes_read > 0)
     {
         printf("Got %d/%ld bytes but delimiter never came! {\n", bytes_read, sizeof(Response) + 1);
-        printf("\t'%c':'%d'\n", SERIAL_DELIMITER, SERIAL_DELIMITER);
+        printf("\t'%c':'%d'\n", SERIAL_DELIMITER_CHEAT, SERIAL_DELIMITER_CHEAT);
         printf("}\n");
     }
     return SERIAL_ERROR_TIMEOUT;
