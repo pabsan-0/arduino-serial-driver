@@ -1,5 +1,5 @@
-#ifndef __ARDUINO_H__
-#define __ARDUINO_H__
+#ifndef __MISC_H__
+#define __MISC_H__
 
 #define SERIAL_DELIMITER ((char)'\r')     // ascii char
 #define SERIAL_DELIMITER_INO ((char)'\r') // ascii char
