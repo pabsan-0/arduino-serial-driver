@@ -118,6 +118,7 @@ void sendResponse(Response& res)
 
     Serial.write((const char*)&res, sizeof(Response));
     Serial.write((const char*)buf, 1);
+    Serial.flush();
 }
 
 bool isValidDigitalPin(int pin)

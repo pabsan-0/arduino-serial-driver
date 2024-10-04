@@ -63,6 +63,8 @@ static int serialSendRequest(const Request data)
 
 static SerialError serialReadResponse(Response* dest, const int timeout_sec)
 {
+    memset(dest, 0, sizeof(Response));
+
     char   buffer[sizeof(Response) + 1]; // struct + delimiter
     int    bytes_read = 0;
     time_t start_time = time(NULL);
@@ -75,9 +77,9 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
         {
             bytes_read += n;
 
-            fflush(stdout);
-            printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
-            fflush(stdout);
+            // fflush(stdout);
+            // printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
+            // fflush(stdout);
 
             // Have I read more bytes than response + delimiter?
             if (bytes_read > sizeof(Response) + 1)
@@ -88,7 +90,7 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
             }
 
             // Is this incoming byte the delimiter?
-            if (buffer[bytes_read - 1] == SERIAL_DELIMITER)
+            if (buffer[bytes_read - 1] == SERIAL_DELIMITER_CHEAT)
             {
                 memcpy(dest, buffer, sizeof(Response));
                 return SERIAL_ERROR_NONE;
@@ -127,6 +129,7 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
             return serialRequestResponse(request, response, ++recursion_lvl);
         case SERIAL_ERROR_NONE:
             // printf("Serial OK\n");
+            usleep(100);
             break;
         default:
             printf("Serial got unexpected outcome. Ignoring...\n");

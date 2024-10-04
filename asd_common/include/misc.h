@@ -4,6 +4,10 @@
 #define SERIAL_DELIMITER ((char)'\r')     // ascii char
 #define SERIAL_DELIMITER_INO ((char)'\r') // ascii char
 
+// Arduino will send a 0x10 (NL) instead of \r (0x13)
+// This is a cheat to save some sanity
+#define SERIAL_DELIMITER_CHEAT ((char)'\n') // ascii char
+
 // User conveniences inherited from Arduino
 // Bool values
 #ifndef HIGH
