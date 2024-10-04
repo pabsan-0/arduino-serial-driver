@@ -73,26 +73,35 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
         int n = read(serial_port, &buffer[bytes_read], 1);
         if (n > 0)
         {
+            bytes_read += n;
 
-            // fflush(stdout);
-            // printf("\t'%c':'%d'\n", buffer[bytes_read], buffer[bytes_read]);
-            // fflush(stdout);
+            fflush(stdout);
+            printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
+            fflush(stdout);
 
-            if (buffer[bytes_read] == SERIAL_DELIMITER)
+            // Have I read more bytes than response + delimiter?
+            if (bytes_read > sizeof(Response) + 1)
+            {
+                // printf("Exceeded bytes!");
+                printf("Expected %ld bytes plus 1 delimiter , got %d\n", sizeof(Response), bytes_read);
+                return SERIAL_ERROR_OVERFLOW;
+            }
+
+            // Is this incoming byte the delimiter?
+            if (buffer[bytes_read - 1] == SERIAL_DELIMITER)
             {
                 memcpy(dest, buffer, sizeof(Response));
                 return SERIAL_ERROR_NONE;
             }
-
-            bytes_read += n;
-            if (bytes_read >= sizeof(Response) + 1)
-            {
-                // printf("Exceeded bytes!");
-                return SERIAL_ERROR_OVERFLOW;
-            }
         }
     }
 
+    if (bytes_read > 0)
+    {
+        printf("Got %d/%ld bytes but delimiter never came! {\n", bytes_read, sizeof(Response) + 1);
+        printf("\t'%c':'%d'\n", SERIAL_DELIMITER, SERIAL_DELIMITER);
+        printf("}\n");
+    }
     return SERIAL_ERROR_TIMEOUT;
 }
 
@@ -100,7 +109,7 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
 {
     if (recursion_lvl > SERIAL_RETRY_LIMIT)
     {
-        printf("Reached retry limit. Failed Serial comms.", NULL); // NULL solves garbage extra chars
+        printf("Reached retry limit. Failed Serial comms.");
         return 1;
     }
 
