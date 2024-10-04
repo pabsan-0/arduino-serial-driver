@@ -1,7 +1,35 @@
 #include "commands.h"
 
-// TODO add request printing here to diagnose commands
-// TODO refactor? three-times repeated code
+#define COMMAND_COMMON_BLOCK(req, res)                                 \
+    do                                                                 \
+    {                                                                  \
+        int err = serialRequestResponse(req, res, 0);                  \
+        if (err)                                                       \
+        {                                                              \
+            printf("Comms error: Serial failed.\n");                   \
+            goto error;                                                \
+        }                                                              \
+                                                                       \
+        if (strcmp(res.messages, ""))                                  \
+        {                                                              \
+            printf("%s\n", res.messages);                              \
+        }                                                              \
+                                                                       \
+        if (res.retval != 0)                                           \
+        {                                                              \
+            printf("Remote error: Response code '%d'!\n", res.retval); \
+            goto error;                                                \
+        }                                                              \
+    }                                                                  \
+    while (0);
+
+#define COMMAND_COMMON_ERROR(req, res) \
+    do                                 \
+    {                                  \
+        REQUEST_PRINT(req);            \
+        RESPONSE_PRINT(res);           \
+    }                                  \
+    while (0)
 
 void digitalWrite(int pin, PinState value)
 {
@@ -9,24 +37,15 @@ void digitalWrite(int pin, PinState value)
     Response res;
 
     strncpy(req.header, "pc", 3);
-    req.cmd = COMMAND_DIGITAL_WRITE;
+    req.cmd  = COMMAND_DIGITAL_WRITE;
     req.arg0 = pin;
     req.arg1 = value;
-    
-    if (!serialRequestResponse(req, res, 0)) {
-        printf("Serial comms failed.\n");
-        return;
-    }
 
-    if (strcmp(res.messages, "")) {
-        printf("%s\n", res.messages); 
-    }
+    COMMAND_COMMON_BLOCK(req, res);
 
-    if (res.retval != 0) {
-        printf("Remote error!\n"); 
-        return;
-    }
-
+    return;
+error:
+    COMMAND_COMMON_ERROR(req, res);
     return;
 }
 
@@ -36,24 +55,15 @@ PinState digitalRead(int pin)
     Response res;
 
     strncpy(req.header, "pc", 3);
-    req.cmd = COMMAND_DIGITAL_READ;
+    req.cmd  = COMMAND_DIGITAL_READ;
     req.arg0 = pin;
 
-    if (!serialRequestResponse(req, res, 0)) {
-        printf("Serial comms failed.\n");
-        return -1;
-    }
-
-    if (strcmp(res.messages, "")) {
-        printf("%s\n", res.messages); 
-    }
-
-    if (res.retval != 0) {
-        printf("Remote error!\n"); 
-        return -1;
-    }
+    COMMAND_COMMON_BLOCK(req, res);
 
     return res.out0;
+error:
+    COMMAND_COMMON_ERROR(req, res);
+    return -1;
 }
 
 void pinMode(int pin, PinMode mode)
@@ -62,23 +72,14 @@ void pinMode(int pin, PinMode mode)
     Response res;
 
     strncpy(req.header, "pc", 3);
-    req.cmd = COMMAND_PIN_MODE;
+    req.cmd  = COMMAND_PIN_MODE;
     req.arg0 = pin;
     req.arg1 = mode;
 
-    if (!serialRequestResponse(req, res, 0)) {
-        printf("Serial comms failed.\n");
-        return;
-    }
+    COMMAND_COMMON_BLOCK(req, res);
 
-    if (strcmp(res.messages, "")) {
-        printf("%s\n", res.messages); 
-    }
-
-    if (res.retval != 0) {
-        printf("Remote error!\n"); 
-        return;
-    }
-
+    return;
+error:
+    COMMAND_COMMON_ERROR(req, res);
     return;
 }

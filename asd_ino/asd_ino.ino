@@ -26,8 +26,7 @@ void setup()
 
 void loop()
 {
-    delay(500);
-
+    //delay(500);
     char   buffer[sizeof(Request) * 2];
     size_t read_count = Serial.readBytesUntil(SERIAL_DELIMITER_INO, buffer, sizeof(Request) * 2);
     if (read_count != sizeof(Request))
@@ -40,7 +39,9 @@ void loop()
     memcpy(&req, buffer, sizeof(Request));
 
     // Response with header, assume retval=False until changed
-    Response res = { "arduino", "", 1, -1 };
+    Response res = { "", "", 1, -1 };
+    strcpy(res.header, "arduino");
+    strcpy(res.messages, "");
 
     // Check the header to ensure it's a valid request
     if (strcmp(req.header, "pc") != 0)
@@ -111,8 +112,10 @@ exit:
 
 void sendResponse(Response& res)
 {
-    Serial.write((uint8_t*)&res, sizeof(Response));
-    Serial.write((const char*)SERIAL_DELIMITER_INO, 1);
+    char buf[] = { SERIAL_DELIMITER_INO };
+
+    Serial.write((const char*)&res, sizeof(Response));
+    Serial.write((const char*)buf, 1);
 }
 
 bool isValidDigitalPin(int pin)

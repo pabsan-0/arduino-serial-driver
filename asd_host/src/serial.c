@@ -52,8 +52,8 @@ static int serialSendRequest(const Request data)
 {
     char delim_str[] = { SERIAL_DELIMITER }; // allow string usage for macro
 
-    write(serial_port, &data, sizeof(Request));
-    write(serial_port, delim_str, 1);  
+    write(serial_port, (char*) &data, sizeof(Request));
+    write(serial_port, (char*) delim_str, 1);  
 
     return 0;
 }
@@ -69,8 +69,9 @@ static SerialError serialReadResponse(Response *dest, const int timeout_sec)
         int n = read(serial_port, &buffer[bytes_read], 1);
         if (n > 0) {
 
-            printf("\t'%c':'%d'\n", buffer[bytes_read], buffer[bytes_read]);
-            fflush(stdout);
+            // fflush(stdout); 
+            // printf("\t'%c':'%d'\n", buffer[bytes_read], buffer[bytes_read]);
+            // fflush(stdout);
 
             if (buffer[bytes_read] == SERIAL_DELIMITER) {
                 memcpy(dest, buffer, sizeof(Response));
@@ -92,7 +93,7 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
 {
 	if (recursion_lvl > SERIAL_RETRY_LIMIT) {
         printf("Reached retry limit. Failed Serial comms.", NULL); // NULL solves garbage extra chars
-		return -1;
+		return 1;
 	}
 
     serialSendRequest(request);
@@ -107,9 +108,10 @@ int serialRequestResponse(Request request, Response response, int recursion_lvl)
             printf("Serial got overflowing bytes, retrying...\n");
             return serialRequestResponse(request, response, ++recursion_lvl);
         case SERIAL_ERROR_NONE:
-            printf("Serial OK\n");
+            // printf("Serial OK\n");
             break;
         default: 
+            printf("Serial got unexpected outcome. Ignoring...\n");
             break;
     }
 
