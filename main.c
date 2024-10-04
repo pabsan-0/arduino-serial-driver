@@ -2,24 +2,28 @@
 #include "serial.h"
 
 #include <time.h>
+
 int main(int argc, char* argv[])
 {
+    // Boot serial port, can be argument
+    char* port = (argc == 2) ? argv[1] : "/dev/ttyUSB0";
+    printf("Using port '%s'\n", port);
 
-    if (serialBegin("/dev/ttyUSB0") == -1)
+    if (serialBegin(port) == -1)
     {
         return 1;
     }
 
     // Wait for arduino, as it resets on serial connection
     time_t start_time = time(NULL);
-    double wait_sec   = 6.0;
+    int    wait_sec   = 3.0;
     while (difftime(time(NULL), start_time) <= wait_sec)
     {
-        double percentage = difftime(time(NULL), start_time) / wait_sec * 100.0;
-        printf("\rWaking arduino... %d%%", (int)percentage);
+        int percentage = difftime(time(NULL), start_time) / wait_sec * 100.0;
+        printf("\rWaking arduino... %d%%", percentage);
         usleep(10000);
     }
-    printf("Ready!\n");
+    printf(" Ready!\n");
 
     PinState pin1 = digitalRead(5);
     printf("1: Read pin1: %d\n", pin1);
