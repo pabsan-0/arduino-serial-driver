@@ -2,31 +2,33 @@
 #include "asd_common/include/request.h"
 #include "asd_common/include/response.h"
 
-#define CHECK_VALID_DIGITAL_PIN(pin)                         \
-    if (!isValidDigitalPin(atoi(pin)))                       \
-    {                                                        \
+#define CHECK_VALID_DIGITAL_PIN(pin)                           \
+    if (!isValidDigitalPin(atoi(pin)))                         \
+    {                                                          \
         strlcat(res.messages, "Bad pin. ", RESPONSE_MSG_SIZE); \
-        goto exit;                                           \
+        goto exit;                                             \
     }
 
-#define CHECK_VALID_DIGITAL_VAL(val)                                            \
-    if (!isHighOrLow(pin))                                                      \
-    {                                                                           \
+#define CHECK_VALID_DIGITAL_VAL(val)                                              \
+    if (!isHighOrLow(pin))                                                        \
+    {                                                                             \
         strlcat(res.messages, "Neither HIGH nor LOW value. ", RESPONSE_MSG_SIZE); \
-        goto exit;                                                              \
+        goto exit;                                                                \
     }
 
 void setup()
 {
     Serial.begin(9600);
-    while (!Serial) {
-      ; // wait for serial port to connect. Needed for native USB
+    while (!Serial)
+    {
+        ; // wait for serial port to connect. Needed for native USB
     }
+    digitalWrite(LED_BUILTIN, HIGH); // teller that we made changes if in doubt
 }
 
 void loop()
 {
-    //delay(500);
+    // delay(500);
     char   buffer[sizeof(Request) * 2];
     size_t read_count = Serial.readBytesUntil(SERIAL_DELIMITER_INO, buffer, sizeof(Request) * 2);
     if (read_count != sizeof(Request))
