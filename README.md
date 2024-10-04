@@ -5,11 +5,14 @@ A multifunctional arduino sketch and a C library with a serial interface to your
 TODO keep testing with plugged arduino
 TODO deconstruct main program into simpler chunks and test one by one
 
+## Compilation
+
 ### Arduino side
 
 ```
 ln -s $PWD/asd_common asd_ino
-arduino-cli compile -b arduino:avr:uno asd_ino/
+arduino-cli compile -b arduino:avr:nano asd_ino/
+arduino-cli upload  -b arduino:avr:nano asd_ino/ -p /dev/ttyUSB0  
 ```
 
 ### Compile and run C sample
@@ -24,15 +27,15 @@ make main && ./main
 ```
 
 
-### Diving deeper
+## Diving deeper
 
 The creation of this repo was a learning effort. Here are some key points worth mentioning as a review.
 
-#### Shared libraries 
+### Shared libraries 
 
 To avoid code repetition, it was desired to have a `common/` library for both Arduino and C. Using external arduino code is not so simple, and the simplest solution was to ask the user to symbollically link the headers into their .ino directory.
 
-#### Serial communications
+### Serial communications
 
 Several cascading ideas were explored towards serial communications:
 
@@ -48,7 +51,7 @@ Implementing such a thing was a big headache, namely the following issues were e
 - Packing: Structs required packing to avoid parsing issues.
 - Field sizes: Arduino and GCC integer sizes differ, one can either use a C99 type or define the spanned bitfield for each ambiguous member of the structs.
 
-#### Monitoring serial ports
+### Monitoring serial ports
 
 One can create virtual sockets with socat:
 
