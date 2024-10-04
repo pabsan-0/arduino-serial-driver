@@ -2,8 +2,9 @@
 
 A multifunctional arduino sketch and a C library with a serial interface to your Arduino board.
 
-TODO keep testing with plugged arduino
-TODO deconstruct main program into simpler chunks and test one by one
+
+TODO commands not working: assess retcode standard
+TODO consecutive communications cause timeout on first try of second call
 
 ## Compilation
 
