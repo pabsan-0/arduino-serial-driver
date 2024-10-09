@@ -3,7 +3,7 @@
 #include "asd_common/include/response.h"
 
 #define CHECK_VALID_DIGITAL_PIN(pin)                           \
-    if (!isValidDigitalPin(atoi(pin)))                         \
+    if (!isValidDigitalPin(pin))                               \
     {                                                          \
         strlcat(res.messages, "Bad pin. ", RESPONSE_MSG_SIZE); \
         goto exit;                                             \
@@ -41,9 +41,9 @@ void loop()
     memcpy(&req, buffer, sizeof(Request));
 
     // Response with header, assume retval=False until changed
-    Response res = { "", "", 1, -1 };
+    Response res = { "", "", -1, -1 };
     strcpy(res.header, "arduino");
-    strcpy(res.messages, "");
+    // strlcat(res.messages, "", RESPONSE_MSG_SIZE);
 
     // Check the header to ensure it's a valid request
     if (strcmp(req.header, "pc") != 0)
@@ -71,8 +71,6 @@ void loop()
 
         case COMMAND_DIGITAL_WRITE:
 
-            bool post_write_ok = false;
-
             CHECK_VALID_DIGITAL_PIN(req.arg0);
             CHECK_VALID_DIGITAL_VAL(req.arg1);
 
@@ -81,10 +79,9 @@ void loop()
 
             digitalWrite(pin, val);
 
-            post_write_ok = (digitalRead(pin) == val);
-            if (!post_write_ok)
+            if (digitalRead(pin) != val)
             {
-                strlcat(res.messages, "Written/read values differ. ", RESPONSE_MSG_SIZE);
+                strlcat(res.messages, "Failed digitalWrite. ", RESPONSE_MSG_SIZE);
                 goto exit;
             }
             break;

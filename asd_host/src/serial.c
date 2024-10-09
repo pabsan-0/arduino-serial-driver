@@ -77,9 +77,10 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
         {
             bytes_read += n;
 
-            fflush(stdout);
-            printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
-            fflush(stdout);
+            // Debugging: print incoming chars one by one
+            // fflush(stdout);
+            // printf("\t'%c':'%d'\n", buffer[bytes_read - 1], buffer[bytes_read - 1]);
+            // fflush(stdout);
 
             // Have I read more bytes than response + delimiter?
             if (bytes_read > sizeof(Response) + 1)
@@ -107,26 +108,26 @@ static SerialError serialReadResponse(Response* dest, const int timeout_sec)
     return SERIAL_ERROR_TIMEOUT;
 }
 
-int serialRequestResponse(Request request, Response response, int recursion_lvl)
+int serialRequestResponse(Request request, Response* response_ptr, int recursion_lvl)
 {
     if (recursion_lvl > SERIAL_RETRY_LIMIT)
     {
         printf("Reached retry limit. Failed Serial comms.");
-        return 1;
+        return -1;
     }
 
     serialSendRequest(request);
-    SerialError ret = serialReadResponse(&response, SERIAL_TIMEOUT);
+    SerialError ret = serialReadResponse(response_ptr, SERIAL_TIMEOUT);
 
     // Check serial interchange
     switch (ret)
     {
         case SERIAL_ERROR_TIMEOUT:
             printf("Serial timed out, retrying...\n");
-            return serialRequestResponse(request, response, ++recursion_lvl);
+            return serialRequestResponse(request, response_ptr, ++recursion_lvl);
         case SERIAL_ERROR_OVERFLOW:
             printf("Serial got overflowing bytes, retrying...\n");
-            return serialRequestResponse(request, response, ++recursion_lvl);
+            return serialRequestResponse(request, response_ptr, ++recursion_lvl);
         case SERIAL_ERROR_NONE:
             // printf("Serial OK\n");
             usleep(100);

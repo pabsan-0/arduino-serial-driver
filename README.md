@@ -2,11 +2,11 @@
 
 A multifunctional arduino sketch and a C library with a serial interface to your Arduino board.
 
-
-TODO commands not working: assess retcode standard
-TODO consecutive communications cause timeout on first try of second call
+TODO consecutive communications cause timeout on first try of second call  
 
 ## Compilation
+
+Compile the host side and upload the arduino side with `make all`, then run the host side with `./main`. The next sections show the separate commands in each side. 
 
 ### Arduino side
 
@@ -16,7 +16,7 @@ arduino-cli compile -b arduino:avr:nano asd_ino/
 arduino-cli upload  -b arduino:avr:nano asd_ino/ -p /dev/ttyUSB0  
 ```
 
-### Compile and run C sample
+### Compile and run C lib + sample
 
 ```
 # Edit usb port in source code
@@ -31,6 +31,15 @@ make main && ./main
 ## Diving deeper
 
 The creation of this repo was a learning effort. Here are some key points worth mentioning as a review.
+
+### Retcode convention
+
+This program's return convention is as follows:
+
+- Functions returning integer 0 mean success
+- Functions returning negative integers mean failure
+- Serial structs define their convention in the headers
+- Declared typedefs do not follow these guidelines
 
 ### Shared libraries 
 

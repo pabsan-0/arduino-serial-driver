@@ -20,8 +20,8 @@ struct Request
 {
     char    header[REQUEST_HEADER_SIZE]; // Header identifier string
     int16_t cmd;                         // Command, integer defined in misc.h
-    int16_t arg0;                        // Argument 0 for cmd
-    int16_t arg1;                        // Argument 1 for cmd
+    int8_t arg0;                         // Argument 0 for cmd
+    int8_t arg1;                         // Argument 1 for cmd
 } __attribute__((__packed__));
 
 typedef struct Request Request;

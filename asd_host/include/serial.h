@@ -26,6 +26,6 @@ typedef enum SerialError SerialError;
 
 int serialBegin(char* port);
 int serialClose();
-int serialRequestResponse(Request request, Response response, int recursion_lvl);
+int serialRequestResponse(Request request, Response* response, int recursion_lvl);
 
 #endif

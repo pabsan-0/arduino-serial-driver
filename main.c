@@ -25,14 +25,17 @@ int main(int argc, char* argv[])
     }
     printf(" Ready!\n");
 
-    PinState pin1 = digitalRead(5);
-    printf("1: Read pin1: %d\n", pin1);
+    int pinNumber = 5;
+    PinState pinValue;
 
-    digitalWrite(5, HIGH);
-    printf("2: Set pin1 to HIGH\n");
+    pinValue = digitalRead(pinNumber);
+    printf("1: Read pinValue: %d\n", pinValue);
 
-    pin1 = digitalRead(5);
-    printf("3: Read pin1: %d\n", pin1);
+    digitalWrite(pinNumber, HIGH);
+    printf("2: Set %d to HIGH\n", pinNumber);
+
+    pinValue = digitalRead(pinNumber);
+    printf("3: Read pinValue: %d\n", pinValue);
 
     serialClose();
 

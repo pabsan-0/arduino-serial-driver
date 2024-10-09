@@ -3,8 +3,8 @@
 #define COMMAND_COMMON_BLOCK(req, res)                                 \
     do                                                                 \
     {                                                                  \
-        int err = serialRequestResponse(req, res, 0);                  \
-        if (err)                                                       \
+        int err = serialRequestResponse(req, &res, 0);                 \
+        if (err < 0)                                                   \
         {                                                              \
             printf("Comms error: Serial failed.\n");                   \
             goto error;                                                \
