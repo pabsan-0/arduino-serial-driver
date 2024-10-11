@@ -1,4 +1,6 @@
 *.o
+*.so
 main
 asd_ino/asd_common
 samples/serial-protocol/diff-struct-ino/reqres.h
+__pycache__
