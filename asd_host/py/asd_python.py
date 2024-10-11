@@ -2,7 +2,7 @@ import ctypes
 from ctypes import c_char_p, c_int
 
 # Load the shared library
-lib = ctypes.CDLL("./asd_host/lib/libasd.o")  # Use "./libasd.dll" on Windows
+lib = ctypes.CDLL("./asd_host/lib/libasd.so")  # Use "./libasd.dll" on Windows
 
 # Define enums as in the C code
 HIGH = 0x1
