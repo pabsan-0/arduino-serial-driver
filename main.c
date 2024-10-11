@@ -1,5 +1,4 @@
-#include "commands.h"
-#include "serial.h"
+#include "asd.h"
 
 #include <time.h>
 
@@ -25,15 +24,18 @@ int main(int argc, char* argv[])
     }
     printf(" Ready!\n");
 
-    int pinNumber = 5;
+    int      pinNumber = 5;
     PinState pinValue;
 
+    printf("1: Reading pinValue...\n");
     pinValue = digitalRead(pinNumber);
     printf("1: Read pinValue: %d\n", pinValue);
 
+    printf("2: Setting pin to HIGH...\n ");
     digitalWrite(pinNumber, HIGH);
     printf("2: Set %d to HIGH\n", pinNumber);
 
+    printf("3: Reading pinValue...\n ");
     pinValue = digitalRead(pinNumber);
     printf("3: Read pinValue: %d\n", pinValue);
 

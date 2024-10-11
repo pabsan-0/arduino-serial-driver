@@ -4,33 +4,71 @@ A multifunctional arduino sketch and a C library with a serial interface to your
 
 TODO consecutive communications cause timeout on first try of second call  
 
+
 ## Compilation
 
-Compile the host side and upload the arduino side with `make all`, then run the host side with `./main`. The next sections show the separate commands in each side. 
+Build with: 
 
-### Arduino side
+- `make asd`: builds the local library
+- `make arduino`: compiles and uploads the arduino sketch
+- `make clean`: cleans up the repository
+
+See also:
+
+- `make main`: to compile a C sample application
+- `arduino-cli board list`: to figure the path of the arduino's fd
+- `arduino-cli compile -b arduino:TAB`: to figure your arduino's avr 
+
+## Usage
+
+
+From C/C++:
 
 ```
-ln -s $PWD/asd_common asd_ino
-arduino-cli compile -b arduino:avr:nano asd_ino/
-arduino-cli upload  -b arduino:avr:nano asd_ino/ -p /dev/ttyUSB0  
+#include "asd.h"
+
+int pinValue;
+
+int main(int argc, char* argv[])
+{
+    serialBegin("/dev/ttyUSB0");
+    
+    pinValue = digitalRead(3);
+    digitalWrite(3, HIGH);
+    pinValue = digitalRead(3);
+
+    serialClose();
+
+    return 0;
+}
 ```
 
-### Compile and run C lib + sample
+From python3:
 
 ```
-# Edit usb port in source code
-arduino-cli board list  # take note of usb port /dev/ttyUSB0
-vim main.c
+import asd_host.py
+from asd_host.py import HIGH, OUTPUT
 
-# Compile and run
-make main && ./main
+asd.serialBegin("/dev/ttyUSB0")
+
+asd.pinMode(3, OUTPUT)
+asd.digitalWrite(3, HIGH)
+asd.digitalRead(3)
+
+asd.serialClose()
 ```
-
 
 ## Diving deeper
 
 The creation of this repo was a learning effort. Here are some key points worth mentioning as a review.
+
+### Arduino-cli memo
+
+```
+arduino-cli board list  
+arduino-cli compile -b arduino:avr:nano sketch/
+arduino-cli upload  -b arduino:avr:nano sketch/ -p /dev/ttyUSB0  
+```
 
 ### Retcode convention
 
