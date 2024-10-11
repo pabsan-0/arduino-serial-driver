@@ -5,46 +5,27 @@ A multifunctional arduino sketch and a C library with a serial interface to your
 TODO consecutive communications cause timeout on first try of second call  
 
 
-## Compilation
 
-Build with: 
-
-- `make asd`: builds the local library
-- `make arduino`: compiles and uploads the arduino sketch
-- `make clean`: cleans up the repository
-
-See also:
-
-- `make main`: to compile a C sample application
-- `arduino-cli board list`: to figure the path of the arduino's fd
-- `arduino-cli compile -b arduino:TAB`: to figure your arduino's avr 
-
-## Usage
-
-
-From C/C++:
+<table>
+<tr><th> C/C++ </th><th> Python </th></tr> <tr><td>
 
 ```
 #include "asd.h"
 
-int pinValue;
-
 int main(int argc, char* argv[])
 {
     serialBegin("/dev/ttyUSB0");
-    
-    pinValue = digitalRead(3);
+
+    pinMode(3, OUTPUT);
     digitalWrite(3, HIGH);
-    pinValue = digitalRead(3);
+    int pinValue = digitalRead(3);
 
     serialClose();
-
-    return 0;
 }
 ```
 
-From python3:
-
+</td><td>
+    
 ```
 import asd_host.py
 from asd_host.py import HIGH, OUTPUT
@@ -53,10 +34,54 @@ asd.serialBegin("/dev/ttyUSB0")
 
 asd.pinMode(3, OUTPUT)
 asd.digitalWrite(3, HIGH)
-asd.digitalRead(3)
+pin_value = asd.digitalRead(3)
 
 asd.serialClose()
 ```
+
+</td></tr></table>
+
+## Compilation
+
+### Host
+
+Build the host side library with:
+
+```
+make asd
+```
+
+### Arduino 
+
+You can either build and upload using the Arduino Editor, or via the CLI. First of all:
+
+- Plug the arduino and take note of its port: `arduino-cli board list`
+- Figure your board's avr based on its model: `arduino-cli compile -b arduino:[TAB][TAB]`
+
+Then, adjust and run these commands to compile and upload.
+
+```
+ln -s $PWD/asd_common asd_ino   ## Run from repo root
+arduino-cli compile -b arduino:avr:nano asd_ino/
+arduino-cli upload  -b arduino:avr:nano asd_ino/ -p /dev/ttyUSB0  
+```
+
+The above values are hardcoded in the `Makefile`, if they match yours, simply do `make arduino`.
+
+## Usage
+
+This library is meant to be used in client code. Once the library is in place, this is the basic workflow you should follow.
+
+- Plug the Arduino into your PC
+- Figure it's connection port path
+- Optionally, check its model's avr and re-upload `asd_ino`
+- Compile and run your application:
+    - Start the serial at the right port
+    - Allow some time for the arduino to reset
+    - ...
+    - Close the serial connection 
+
+For client code examples, refer to `samples/`.
 
 ## Diving deeper
 
@@ -79,7 +104,7 @@ This program's return convention is as follows:
 - Serial structs define their convention in the headers
 - Declared typedefs do not follow these guidelines
 
-### Shared libraries 
+### Shared code between host and arduino 
 
 To avoid code repetition, it was desired to have a `common/` library for both Arduino and C. Using external arduino code is not so simple, and the simplest solution was to ask the user to symbollically link the headers into their .ino directory.
 
