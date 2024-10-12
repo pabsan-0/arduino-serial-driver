@@ -1,7 +1,10 @@
-// main.c
 #include "commands.h"
 #include "serial.h"
 #include "misc.h"
+
+/*
+ * Boilerplate for python interface
+ */
 
 int py_serialBegin(char* port)
 {

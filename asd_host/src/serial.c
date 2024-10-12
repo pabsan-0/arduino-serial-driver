@@ -31,6 +31,19 @@ int serialBegin(char* port)
     tty.c_cflag &= ~CSIZE;
     tty.c_cflag |= B9600 | CS8 | CLOCAL | CREAD;
 
+    // Raw input: else issues on consecutive serial comms
+    tty.c_lflag &= ~(ICANON | ECHO | ECHOE | ISIG);
+    tty.c_oflag &= ~OPOST;
+
+    // For reference: taken from https://github.com/todbot/arduino-serial/blob/main/arduino-serial-lib.c
+    //
+    // tty.c_cflag &= ~CRTSCTS;
+    // tty.c_cflag &= ~HUPCL;
+    // tty.c_iflag &= ~(IXON | IXOFF | IXANY);         // turn off s/w flow ctrl
+    // tty.c_cc[VMIN]  = 0;
+    // tty.c_cc[VTIME] = 0;
+    // tty.c_cc[VTIME] = 20;
+
     tcflush(serial_port, TCIFLUSH);
     tcsetattr(serial_port, TCSANOW, &tty);
 
