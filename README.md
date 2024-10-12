@@ -2,6 +2,22 @@
 
 A multifunctional arduino sketch and a C library with a serial interface to your Arduino board.
 
+To be implemented:
+- Baudrate switching
+- Benchmarker on arduino side
+- Samples: Integral example with its own makefile of a two-side app
+- Samples: Basic tests, error showcases
+
+Speed limits at 9600 baud:
+
+```
+digitalRead:    30.666666 calls per second
+                92 times in 3.000000 seconds
+digitalWrite:   30.333334 calls per second
+                91 times in 3.000000 seconds
+pinMode:        30.333334 calls per second
+                91 times in 3.000000 seconds
+```
 
 <table>
 <tr><th> C/C++ </th><th> Python </th></tr> <tr><td>
