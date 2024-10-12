@@ -1,12 +1,6 @@
 # ASD Arduino-serial-driver 
 
-A multifunctional arduino sketch and a C library with a serial interface to your Arduino board.
-
-To be implemented:
-- Baudrate switching
-- Benchmarker on arduino side
-- Samples: Integral example with its own makefile of a two-side app
-- Samples: Basic tests, error showcases
+Generic Arduino Sketch and C library to perform Arduino I/O operations from programs running in your PC via serial. 
 
 Speed limits at 9600 baud:
 
@@ -53,6 +47,14 @@ asd.serialClose()
 ```
 
 </td></tr></table>
+
+
+To be implemented:
+- Baudrate switching
+- Benchmarker on arduino side
+- Samples: Integral example with its own makefile of a two-side app
+- Samples: Basic tests, error showcases
+
 
 ## Compilation
 
