@@ -1,8 +1,20 @@
+import os
 import ctypes
 from ctypes import c_char_p, c_int
 
-# Load the shared library
-lib = ctypes.CDLL("./asd_host/lib/libasd.so")  # Use "./libasd.dll" on Windows
+# Load the shared library from env, default to the assumption
+# we're in the repository root.
+lib_dirname  = os.environ.get("ASD_LIBRARY_PATH", "./asd_host/lib") 
+lib_basename = "libasd.so"
+
+try:
+    lib = ctypes.CDLL(os.path.join(lib_dirname, lib_basename))
+except OSError as ee:
+    print(ee)
+    print("\nFatal: Could not locate %s. Try setting the environment variable:" % lib_basename)
+    print("$ export ASD_LIBRARY_PATH=lib/parent/dir")
+    print("Aborted.")
+    exit(1)
 
 # Define enums as in the C code
 HIGH = 0x1
