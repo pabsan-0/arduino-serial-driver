@@ -2,9 +2,6 @@
 
 A multifunctional arduino sketch and a C library with a serial interface to your Arduino board.
 
-TODO consecutive communications cause timeout on first try of second call  
-
-
 
 <table>
 <tr><th> C/C++ </th><th> Python </th></tr> <tr><td>

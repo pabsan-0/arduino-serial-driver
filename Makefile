@@ -13,6 +13,9 @@ arduino:
 sample00: samples/sample00.c asd
 	gcc -Wall -Wpedantic -g3 -Iasd_common/include -Iasd_host/include samples/sample00.c -L./asd_host/lib -lasd -Wl,-rpath=./asd_host/lib -o sample00
 
+sample02: samples/sample02.c asd
+	gcc -Wall -Wpedantic -g3 -Iasd_common/include -Iasd_host/include samples/sample02.c -L./asd_host/lib -lasd -Wl,-rpath=./asd_host/lib -o sample02
+
 clean:
 	rm sample00                   || true
 	rm asd_host/lib/libasd.so     || true
